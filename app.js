@@ -1,4 +1,4 @@
-/**
+/*
  * Module dependencies.
  */
 
@@ -10,7 +10,8 @@ var express = require('express')
   , http = require('http')
   , path = require('path')
   , passport = require('passport')
-  , TwitterStrategy = require('passport-twitter').Strategy;
+  , TwitterStrategy = require('passport-twitter').Strategy
+  , MongoClient = require('mongodb').MongoClient;
 
 var app = express();
 
@@ -31,11 +32,18 @@ passport.use(new TwitterStrategy({
   function(token, tokenSecret, profile, done) {
     // asynchronous verification, for effect...
     process.nextTick(function () {
-      
+		console.log(profile);
       // To keep the example simple, the user's Twitter profile is returned to
       // represent the logged-in user.  In a typical application, you would want
       // to associate the Twitter account with a user record in your database,
       // and return that user instead.
+	  MongoClient.connect('mongodb://127.0.0.1:27017/AudioLine', function(err, db) {
+		  if (err) throw err;
+		  var collection = db.collection('user');
+		  collection.insert({token:token, tokenSecret:tokenSecret}, function(err, docs) {
+			  db.close();
+		  });
+	  });
       return done(null, profile);
     });
   }
@@ -65,12 +73,15 @@ if ('development' == app.get('env')) {
 
 app.get('/', routes.index);
 app.get('/users', user.list);
+
 app.get('/account', ensureAuthenticated, function(req, res){
-  res.render('account', { user: req.user });
+	res.render('index', { title: 'account'} );
+//  res.render('account', { user: req.user });
 });
 
 app.get('/login', function(req, res){
-  res.render('login', { user: req.user });
+  res.render('index', { title :'login'});
+//  res.render('login', { user: req.user });
 });
 
 // GET /auth/twitter
