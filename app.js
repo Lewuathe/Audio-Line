@@ -37,10 +37,11 @@ passport.use(new TwitterStrategy({
       // represent the logged-in user.  In a typical application, you would want
       // to associate the Twitter account with a user record in your database,
       // and return that user instead.
+	  var username = profile["username"];
 	  MongoClient.connect('mongodb://127.0.0.1:27017/AudioLine', function(err, db) {
 		  if (err) throw err;
 		  var collection = db.collection('user');
-		  collection.insert({token:token, tokenSecret:tokenSecret}, function(err, docs) {
+		  collection.insert({id:username,token:token, tokenSecret:tokenSecret}, function(err, docs) {
 			  db.close();
 		  });
 	  });
