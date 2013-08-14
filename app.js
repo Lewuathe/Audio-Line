@@ -31,22 +31,24 @@ passport.use(new TwitterStrategy({
   },
   function(token, tokenSecret, profile, done) {
     // asynchronous verification, for effect...
-    process.nextTick(function () {
-		console.log(profile);
-      // To keep the example simple, the user's Twitter profile is returned to
-      // represent the logged-in user.  In a typical application, you would want
-      // to associate the Twitter account with a user record in your database,
-      // and return that user instead.
-	  var username = profile["username"];
-	  MongoClient.connect('mongodb://127.0.0.1:27017/AudioLine', function(err, db) {
-		  if (err) throw err;
-		  var collection = db.collection('user');
-		  collection.insert({id:username,token:token, tokenSecret:tokenSecret}, function(err, docs) {
-			  db.close();
-		  });
-	  });
-      return done(null, profile);
-    });
+	var username = profile["username"];
+	passport.session.accessToken = token;
+	passport.session.profile     = profile;
+	MongoClient.connect('mongodb://127.0.0.1:27017/AudioLine', function(err, db) {
+		if (err) throw err;
+		var collection = db.collection('user');
+		collection.find({id:username}).toArray(function(err, result) {
+			if (result.length > 0) {
+				done(null, profile);
+			}
+			else {
+				collection.insert({id:username,token:token, tokenSecret:tokenSecret}, function(err, docs) {
+					db.close();
+					done(null, profile);
+				});
+			}
+		});
+	});
   }
 ));
 
@@ -72,8 +74,7 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-app.get('/', routes.index);
-app.get('/users', user.list);
+app.get('/',  routes.index);
 
 app.get('/account', ensureAuthenticated, function(req, res){
 	res.render('index', { title: 'account'} );
@@ -81,8 +82,8 @@ app.get('/account', ensureAuthenticated, function(req, res){
 });
 
 app.get('/login', function(req, res){
-  res.render('index', { title :'login'});
-//  res.render('login', { user: req.user });
+	res.redirect('/auth/twitter');
+	//  res.render('login', { user: req.user });
 });
 
 // GET /auth/twitter
@@ -106,7 +107,7 @@ app.get('/auth/twitter/callback',
   passport.authenticate('twitter', { failureRedirect: '/login' }),
   function(req, res) {
     res.redirect('/');
-  });
+});
 
 app.get('/logout', function(req, res){
   req.logout();
