@@ -11,10 +11,14 @@ var express = require('express')
   , path = require('path')
   , passport = require('passport')
   , TwitterStrategy = require('passport-twitter').Strategy
-  , MongoClient = require('mongodb').MongoClient;
+  , MongoClient = require('mongodb').MongoClient
+  , twitter = require('ntwitter');
 
 var app = express();
 
+var gProfile;
+var gToken;
+var gTokenSecret;
 
 passport.serializeUser(function(user, done) {
   done(null, user);
@@ -30,25 +34,11 @@ passport.use(new TwitterStrategy({
 	callbackURL : "http://" + config["host"] + ":3000/auth/twitter/callback"
   },
   function(token, tokenSecret, profile, done) {
+	gProfile = profile;
+	gToken   = token;
+	gTokenSecret = tokenSecret;
+	done(null, profile);
     // asynchronous verification, for effect...
-	var username = profile["username"];
-	passport.session.accessToken = token;
-	passport.session.profile     = profile;
-	MongoClient.connect('mongodb://127.0.0.1:27017/AudioLine', function(err, db) {
-		if (err) throw err;
-		var collection = db.collection('user');
-		collection.find({id:username}).toArray(function(err, result) {
-			if (result.length > 0) {
-				done(null, profile);
-			}
-			else {
-				collection.insert({id:username,token:token, tokenSecret:tokenSecret}, function(err, docs) {
-					db.close();
-					done(null, profile);
-				});
-			}
-		});
-	});
   }
 ));
 
@@ -83,8 +73,22 @@ app.get('/account', ensureAuthenticated, function(req, res){
 });
 
 app.get('/login', function(req, res){
-	res.redirect('/auth/twitter');
-	//  res.render('login', { user: req.user });
+	var userid = "";
+	console.log(gToken);
+	console.log(gTokenSecret);
+	var twit = twitter({
+		consumer_key : config["consumerKey"],
+		consumer_secret : config["consumerSecret"],
+		access_token_key : gToken,
+		access_token_secret : gTokenSecret
+	});
+	twit.getUserTimeline({count:200}, function(err, data) {
+		var tweets = [];
+		for (var i = 0; i < data.length; i++ ) {
+			tweets.push(data[i]["text"]);
+		}
+		res.render('audioline', { tweets: tweets });
+	});
 });
 
 // GET /auth/twitter
@@ -107,7 +111,7 @@ app.get('/auth/twitter',
 app.get('/auth/twitter/callback', 
   passport.authenticate('twitter', { failureRedirect: '/login' }),
   function(req, res) {
-    res.redirect('/');
+    res.redirect('/login');
 });
 
 app.get('/logout', function(req, res){
