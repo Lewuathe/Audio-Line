@@ -85,7 +85,12 @@ app.get('/login', function(req, res){
 	twit.getUserTimeline({count:200}, function(err, data) {
 		var tweets = [];
 		for (var i = 0; i < data.length; i++ ) {
-			tweets.push(data[i]["text"]);
+			var tweet = [];
+			for (var j = 0; j < data[i]["text"].length; j++) {
+				var buf = new Buffer(data[i]["text"]);
+				tweet.push(buf.readInt8(j));
+			}
+			tweets.push(tweet);
 		}
 		res.render('audioline', { tweets: tweets });
 	});
