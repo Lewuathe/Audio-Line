@@ -10,7 +10,6 @@
     "ejs": "*",
 	"ntwitter" : "*",
 	"passport-twitter" : "*",
-	"passport" : "*",
-	"mongodb" : "*"
+	"passport" : "*"
   }
 }

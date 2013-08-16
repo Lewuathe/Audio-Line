@@ -11,7 +11,6 @@ var express = require('express')
   , path = require('path')
   , passport = require('passport')
   , TwitterStrategy = require('passport-twitter').Strategy
-  , MongoClient = require('mongodb').MongoClient
   , twitter = require('ntwitter');
 
 var app = express();
