@@ -160,25 +160,10 @@ function oneliner(tweets) {
         notes.push(new Note(freqList[i]));
     }
     
-/*
-    var Do = new Note(262);
-    var Re = new Note(294);
-    var Fa = new Note(349);
-    var Mi = new Note(330);
-
-    notes.push(Do);
-    notes.push(Do);
-    notes.push(Re);
-    notes.push(Do);
-    notes.push(Fa);
-    notes.push(Mi);
-*/
-
     var gPhase = 0;
     return {
         process: function(L, R) {
             for (var i = 0; i < L.length; i++) {
-				var index = Math.floor(i / tweets.length);
                 L[i] = R[i] = notes.sound(gPhase);
                 notes.keep();
                 gPhase += 0.005;
