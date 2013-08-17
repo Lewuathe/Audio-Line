@@ -17,122 +17,127 @@ Notes.prototype.keep = function() {
 
 Notes.prototype.sound = function(gPhase) {
     var self = this;
+    var ret;
+    var tweetIndex = Math.floor(gPhase % 200) + 13;
     if (gPhase < 60 ) {
         // Do 60
-        return self.noteList[0].sound();
+        ret = self.noteList[0].sound();
     }
     else if (gPhase < 102 ) {
         // None 42
-        return 0.25;
+        ret = 0.25;
     }
     else if (gPhase < 150 ) {
         // Do 48
-        return self.noteList[0].sound();
+        ret = self.noteList[0].sound();
     }
     else if (gPhase < 250) {
         // Re 100
-        return self.noteList[1].sound();
+        ret = self.noteList[1].sound();
     }
     else if (gPhase < 360) {
         // Do 110
-        return self.noteList[0].sound();
+        ret = self.noteList[0].sound();
     }
     else if (gPhase < 460) {
         // Fa 100
-        return self.noteList[3].sound();
+        ret = self.noteList[3].sound();
     }
     else if (gPhase < 740 ) {
         // Mi 140
-        return self.noteList[2].sound();
+        ret = self.noteList[2].sound();
     }
     else if (gPhase < 800) {
-        return 0.25;
+        ret = 0.25;
     }
     else if (gPhase < 860 ) {
         // Do 60
-        return self.noteList[0].sound();
+        ret = self.noteList[0].sound();
     }
     else if (gPhase < 902 ) {
         // None 42
-        return 0.25;
+        ret = 0.25;
     }
     else if (gPhase < 950 ) {
         // Do 48
-        return self.noteList[0].sound();
+        ret = self.noteList[0].sound();
     }
     else if (gPhase < 1050) {
         // Re 100
-        return self.noteList[1].sound();
+        ret = self.noteList[1].sound();
     }
     else if (gPhase < 1160) {
         // Do 110
-        return self.noteList[0].sound();
+        ret = self.noteList[0].sound();
     }
     else if (gPhase < 1260) {
         // So 100
-        return self.noteList[4].sound();
+        ret = self.noteList[4].sound();
     }
     else if (gPhase < 1500 ) {
         // Fa 
-        return self.noteList[3].sound();
+        ret = self.noteList[3].sound();
     }
     else if (gPhase < 1550) {
-        return self.noteList[0].sound();
+        ret = self.noteList[0].sound();
     }
     else if (gPhase < 1600) {
-        return 0.25;
+        ret = 0.25;
     }
     else if (gPhase < 1650) {
-        return self.noteList[0].sound();
+        ret = self.noteList[0].sound();
     }
     else if (gPhase < 1750) {
         // Do2
-        return self.noteList[7].sound();
+        ret = self.noteList[7].sound();
     }
     else if (gPhase < 1850) {
-        return self.noteList[5].sound();
+        ret = self.noteList[5].sound();
     }
     else if (gPhase < 1950) {
-        return self.noteList[4].sound();
+        ret = self.noteList[4].sound();
     }
     else if (gPhase < 2000) {
-        return self.noteList[3].sound();
+        ret = self.noteList[3].sound();
     }
     else if (gPhase < 2050) {
-        return 0.25;
+        ret = 0.25;
     }
     else if (gPhase < 2090) {
-        return self.noteList[3].sound();
+        ret = self.noteList[3].sound();
     }
     else if (gPhase < 2500) {
-        return self.noteList[1].sound();
+        ret = self.noteList[1].sound();
     }
 
 
     else if (gPhase < 2550) {
-        return self.noteList[10].sound();
+        ret = self.noteList[10].sound() + self.noteList[3].sound();
     }
     else if (gPhase < 2600) {
-        return 0.25;
+        ret = 0.25;
     }
     else if (gPhase < 2650) {
-        return self.noteList[10].sound();
+        ret = self.noteList[10].sound() + self.noteList[3].sound();
     }
     else if (gPhase < 2760) {
-        return self.noteList[9].sound();
+        ret = self.noteList[9].sound() + self.noteList[2].sound();
     }
     else if (gPhase < 2870) {
-        return self.noteList[7].sound();
+        ret = self.noteList[7].sound() + self.noteList[0].sound();
     }
     else if (gPhase < 2990) {
-        return self.noteList[8].sound();
+        ret = self.noteList[8].sound() + self.noteList[1].sound();
     }
     else if (gPhase < 3500 ){
-        return self.noteList[7].sound();
+        ret = self.noteList[7].sound() + self.noteList[0].sound();
     }
     else {
-        return 0.25;
+        ret = 0.25;
     }
+
+    ret += self.noteList[tweetIndex-1].sound() * 0.1 + self.noteList[tweetIndex].sound() * 0.1 + self.noteList[tweetIndex-2].sound() * 0.1;
+    return ret;
 }
 
 function Note(freq) {
@@ -148,10 +153,17 @@ Note.prototype.keep = function(){
 
 Note.prototype.sound = function() {
     var self = this;
-    return Math.sin(6.28318 * self.phase) * 0.50;
+    return Math.sin(6.28318 * self.phase) * 0.6;
 }
 
 
+function average(list) {
+    var sum = 0;
+    for (var i = 0; i < list.length; i++) {
+        sum += list[i];
+    }
+    return sum / list.length;
+}
 
 function oneliner(tweets) {
     var freqList = [262, 294, 330, 349, 392, 440, 494, 262*2, 294*2, 330*2, 349*2, 392*2, 440*2, 494*2];
@@ -159,7 +171,14 @@ function oneliner(tweets) {
     for (var i = 0; i < freqList.length; i++) {
         notes.push(new Note(freqList[i]));
     }
-    
+
+    var tweetAves = [];
+    for (var i = 0; i < tweets.length; i++) {
+        var aveFreq = Math.abs(average(tweets[i])) * 50;
+        notes.push(new Note(aveFreq));
+    }
+
+
     var gPhase = 0;
     return {
         process: function(L, R) {
