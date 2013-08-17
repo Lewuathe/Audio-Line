@@ -202,22 +202,27 @@ $(function(){
     
 	var camera, scene, renderer;
 	var geometry, material, mesh;
+
+	var boid = new Boid(1000, 550);
 	
 	function init() {
-		
 		camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
 		camera.position.z = 1000;
 		
 		scene = new THREE.Scene();
 		
-		geometry = new THREE.CubeGeometry( 200, 200, 200 );
-		material = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: true } );
+//		geometry = new THREE.CubeGeometry( 50, 50, 50 );
+        geometry = new THREE.CylinderGeometry(5, 20, 50);
+		material = new THREE.MeshBasicMaterial( { color: 0x33ccff, wireframe: true } );
 		
-		mesh = new THREE.Mesh( geometry, material );
-		scene.add( mesh );
-		
+        for (var i = 0; i < 50; i++) {
+		    mesh = new THREE.Mesh( geometry, material );
+            scene.add(mesh);
+            boid.addMesh(mesh);
+        }
+    
 		renderer = new THREE.CanvasRenderer();
-		renderer.setSize( 800, 500 );
+		renderer.setSize( 1000, 550 );
 		
 		document.body.appendChild( renderer.domElement );
 		
@@ -226,10 +231,14 @@ $(function(){
 	function animate() {
 		// note: three.js includes requestAnimationFrame shim
 		requestAnimationFrame( animate );
-		
-		mesh.rotation.x += 0.01;
-		mesh.rotation.y += 0.02;
-		
+	    boid.update();
+        
+	    for (var i = 0; i < boid.objects.length; i++) {
+            var mesh = boid.objects[i];
+//		    mesh.rotation.x += 0.01;
+//		    mesh.rotation.y = mesh.vy;
+//            mesh.rotation.z = mesh.vz;
+        }
 		renderer.render( scene, camera );
 		
 	}
