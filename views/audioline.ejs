@@ -3,22 +3,17 @@
   <head>
     <title>AudioLine</title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
-	<link rel="stylesheet" type="text/css" href="/stylesheets/jquery.mobile.flatui.css" />
+	<script src="/javascripts/three.min.js"></script>
 	<script src="/javascripts/jquery.min.js"></script>
-	<script src="/javascripts/jquery.mobile-1.3.1.min.js"></script>
 	<script src="/javascripts/pico.js"></script>
-	<script src="/javascripts/solo.js"></script>
 	<script type="text/javascript">
-	  $(function(){
-	      var tweets = [
-	      <% for(var i = 0; i < tweets.length; i++) {%>
-			 [ <%= tweets[i] %> ],
-	      <% } %>
-          ];
-
-		  pico.play(oneliner(tweets));
-	  });
+	  var tweets = [
+	  <% for(var i = 0; i < tweets.length; i++) {%>
+		 [ <%= tweets[i] %> ],
+	     <% } %>
+      ];
 	</script>
+	<script src="/javascripts/solo.js"></script>
   </head>
   <body>
     <h1>Happy your birthday!</h1>
