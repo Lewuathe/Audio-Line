@@ -203,25 +203,38 @@ $(function(){
 	var camera, scene, renderer;
 	var geometry, material, mesh;
 
-	var boid = new Boid( window.innerWidth*0.8, window.innerHeight*0.8 );
+	var boid = new Boid( 900, 450 );
+    var centerX = 500;
+    var centerY = 400;
 
 
     $("body").on("mousemove", "canvas", function(e){
         var pageCoords = "( " + e.pageX + ", " + e.pageY + " )";
         var clientCoords = "( " + e.clientX + ", " + e.clientY + " )";
-        console.log(pageCoords + "  " + clientCoords);
+        camera.position.x =  1000*Math.sin(0.002*(e.clientX - centerX));
+        camera.position.z =  1000*Math.cos(0.002*(e.clientX - centerX));
+        camera.position.y =  1000*Math.sin(-0.001*(e.clientY - centerY));
+        console.log("x: " + camera.position.x + ", z: " + camera.position.z);
+        camera.lookAt(new THREE.Vector3(0, 0, 0));
     });
 	function init() {
 		camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
 		camera.position.z = 1000;
+        camera.position.y = 100;
+        camera.lookAt(new THREE.Vector3(0, 0, 0));
 		
 		scene = new THREE.Scene();
 		
         geometry = new THREE.SphereGeometry(15);
 		material = new THREE.MeshBasicMaterial( { color: 0x33ccff, wireframe: true } );
+        
+        var wingGeometry = new THREE.PlaneGeometry(25, 25);
 
-        wingGeometry = new THREE.PlaneGeometry(25, 25);
-		
+        var plane = new THREE.TorusGeometry(500, 40, 8, 20);
+        var stage = new THREE.Mesh(plane, material);
+        stage.rotation.x = 3.14159 * 0.5;
+        
+		scene.add(stage);
         for (var i = 0; i < 30; i++) {
 		    mesh = new THREE.Mesh( geometry, material );
             mesh.rWing = new THREE.Mesh(wingGeometry, material);
@@ -233,8 +246,7 @@ $(function(){
         }
 
 		renderer = new THREE.CanvasRenderer();
-        console.log(innerHeight*0.8);
-		renderer.setSize( innerWidth*0.8, innerHeight*0.8 );
+		renderer.setSize( 900, 450 );
 		
 		document.body.appendChild( renderer.domElement );
 		
