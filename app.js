@@ -83,7 +83,9 @@ app.get('/login', function(req, res){
 	});
 	twit.getUserTimeline({count:200}, function(err, data) {
 		var tweets = [];
+        var rawTweets = [];
 		for (var i = 0; i < data.length; i++ ) {
+            rawTweets.push(data[i]["text"]);
 			var tweet = [];
 			for (var j = 0; j < data[i]["text"].length; j++) {
 				var buf = new Buffer(data[i]["text"]);
@@ -91,7 +93,8 @@ app.get('/login', function(req, res){
 			}
 			tweets.push(tweet);
 		}
-		res.render('audioline', { tweets: tweets });
+
+		res.render('audioline', { tweets: tweets, rawTweets: rawTweets });
 	});
 });
 

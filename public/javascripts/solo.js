@@ -289,12 +289,28 @@ $(function(){
 		renderer.render( scene, camera );
 		
 	}
-	
+
+
+	function displayTweet() {
+        var index = Math.floor(Math.random() * 25);
+        var text2 = document.getElementById('tweet');
+        text2.className = "drop-shadow round";
+        text2.style.position = 'absolute';
+        //text2.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
+        text2.style.width = 100;
+        text2.style.height = 100;
+        //text2.style.backgroundColor = "blue";
+        text2.innerHTML = rawTweets[index];
+        text2.style.top = Math.floor(Math.random() * 500 + 100) + "px";
+        text2.style.left = Math.floor(Math.random() * 1000) + "px";
+//        document.body.appendChild(text2);
+    }
     
 	pico.play(oneliner(tweets));
 
 	init();
 	animate();
+    setInterval(displayTweet, 3000);
 
 
 });

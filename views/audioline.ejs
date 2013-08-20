@@ -8,16 +8,24 @@
 	<script src="/javascripts/boid.js"></script>
 	<script src="/javascripts/pico.js"></script>
 	<script type="text/javascript">
+	  var rawTweets = [
+	  <% for(var i = 0; i < 25; i++) {%>
+          "<%= rawTweets[i] %>",
+	  <% } %>
+      ];
+
 	  var tweets = [
 	  <% for(var i = 0; i < tweets.length; i++) {%>
 		 [ <%= tweets[i] %> ],
-	     <% } %>
+	  <% } %>
       ];
+
 	</script>
 	<script src="/javascripts/solo.js"></script>
   </head>
   <body>
 	<h2>Happy Birthday!!</h2>
 	<h1 id="name">Kai</h1>
+	<div id="tweet"></div>
   </body>
 </html>
