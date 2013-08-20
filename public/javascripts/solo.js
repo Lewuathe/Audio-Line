@@ -213,11 +213,13 @@ $(function(){
         var clientCoords = "( " + e.clientX + ", " + e.clientY + " )";
         camera.position.x =  1000*Math.sin(0.002*(e.clientX - centerX));
         camera.position.z =  1000*Math.cos(0.002*(e.clientX - centerX));
-        camera.position.y =  1000*Math.sin(-0.001*(e.clientY - centerY));
+        camera.position.y =  1000*Math.sin(-0.002*(e.clientY - centerY));
         console.log("x: " + camera.position.x + ", z: " + camera.position.z);
         camera.lookAt(new THREE.Vector3(0, 0, 0));
     });
 	function init() {
+
+        
 		camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
 		camera.position.z = 1000;
         camera.position.y = 100;
@@ -225,17 +227,38 @@ $(function(){
 		
 		scene = new THREE.Scene();
 		
-        geometry = new THREE.SphereGeometry(15);
-		material = new THREE.MeshBasicMaterial( { color: 0x33ccff, wireframe: true } );
+        geometry = new THREE.SphereGeometry(12, 3, 2);
+		material = new THREE.MeshBasicMaterial( { color: 0x33ccff, wireframe: false } );
         
-        var wingGeometry = new THREE.PlaneGeometry(25, 25);
+        
+        var wingGeometry = new THREE.PlaneGeometry(20, 20);
 
-        var plane = new THREE.TorusGeometry(500, 40, 8, 20);
-        var stage = new THREE.Mesh(plane, material);
-        stage.rotation.x = 3.14159 * 0.5;
+        var plane = new THREE.CylinderGeometry(500, 500, 150, 20);
+        var cakeMaterial = new THREE.MeshBasicMaterial( { color: 0x000000, wireframe: true });
+
+        var candleGeometry = new THREE.CylinderGeometry(20, 20, 150, 10);
+        var stage = new THREE.Mesh(plane, cakeMaterial);
+        //stage.rotation.x = 3.14159 * 0.5;
+
+        var fireGeometry = new THREE.SphereGeometry(20, 3, 2);
+        var fireMaterial = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: false });
         
 		scene.add(stage);
-        for (var i = 0; i < 30; i++) {
+        for (var i = 0; i < 25; i++) {
+            var candle = new THREE.Mesh(candleGeometry, cakeMaterial);
+            scene.add(candle);
+            candle.position.y = 150;
+            candle.position.x = 400 * Math.cos(2*Math.PI / 25 * i);
+            candle.position.z = 400 * Math.sin(2*Math.PI / 25 * i);
+            
+            var fire = new THREE.Mesh(fireGeometry, fireMaterial);
+            scene.add(fire);
+            fire.position.y = 240;
+            fire.position.x = 400 * Math.cos(2*Math.PI / 25 * i);
+            fire.position.z = 400 * Math.sin(2*Math.PI / 25 * i);
+        }
+
+        for (var i = 0; i < 25; i++) {
 		    mesh = new THREE.Mesh( geometry, material );
             mesh.rWing = new THREE.Mesh(wingGeometry, material);
             mesh.lWing = new THREE.Mesh(wingGeometry, material);

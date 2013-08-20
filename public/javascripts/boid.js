@@ -30,11 +30,11 @@ Boid.prototype.addMesh = function(mesh) {
     mesh.position.y = Math.random() * self.height - self.height / 2;
     mesh.position.z = Math.random() * self.depth - self.depth / 2;
 
-    mesh.rWing.position.x = mesh.position.x + 1;
+    mesh.rWing.position.x = mesh.position.x + 10;
     mesh.rWing.position.y = mesh.position.y;
     mesh.rWing.position.z = mesh.position.z;
 
-    mesh.lWing.position.x = mesh.position.x - 1;
+    mesh.lWing.position.x = mesh.position.x - 10;
     mesh.lWing.position.y = mesh.position.y;
     mesh.lWing.position.z = mesh.position.z;
     
@@ -159,13 +159,13 @@ Boid.prototype.update = function() {
         mesh.position.y += mesh.vy;
         mesh.position.z += mesh.vz;
         
-        mesh.rWing.position.x    += mesh.vx;
-        mesh.rWing.position.y    += mesh.vy;
-        mesh.rWing.position.z    += mesh.vz;
+        mesh.rWing.position.x    = mesh.position.x + 10;
+        mesh.rWing.position.y    = mesh.position.y;
+        mesh.rWing.position.z    = mesh.position.z;
         
-        mesh.lWing.position.x    += mesh.vx;
-        mesh.lWing.position.y    += mesh.vy;
-        mesh.lWing.position.z    += mesh.vz;
+        mesh.lWing.position.x    = mesh.position.x - 10;
+        mesh.lWing.position.y    = mesh.position.y;
+        mesh.lWing.position.z    = mesh.position.z;
         
         var direction = Boid.normalize(mesh.vx, mesh.vy, mesh.vz);
         /*
@@ -174,9 +174,9 @@ Boid.prototype.update = function() {
         mesh.rotation.z = direction[1];
         */
 
-//        mesh.lWing.rotation.x = mesh.rWing.rotation.x = direction[2];
-        mesh.lWing.rotation.y = mesh.rWing.rotation.y += Math.random();
-//        mesh.lWing.rotation.z = mesh.rWing.rotation.z = direction[0];
+        mesh.lWing.rotation.x = mesh.rWing.rotation.x += 0.05;
+        mesh.lWing.rotation.y = mesh.rWing.rotation.y += 0.8;
+        mesh.lWing.rotation.z = mesh.rWing.rotation.z += 0.05;
         
     }
     
